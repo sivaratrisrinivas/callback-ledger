@@ -233,7 +233,7 @@ export default function App() {
               </div>
               <div className="card timeline">
                 <div className="title">Application timeline</div>
-                {(detail?.timeline || []).slice(-9).map((t, i) => (
+                {(detail?.timeline || []).slice(-6).map((t, i) => (
                   <div key={i} className={"tl k-" + t.kind}>
                     <span className="muted">{time(t.at)}</span> {t.message}
                   </div>

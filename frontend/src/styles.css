@@ -50,7 +50,8 @@ input { width: 52px; font: inherit; padding: 2px 4px; }
 .code { display: inline-block; font-family: ui-monospace, monospace; font-size: 11px; padding: 1px 5px; border-radius: 5px; margin: 1px 2px; }
 .c2 { background: #dcfae6; color: #067647; } .c4 { background: #fee4e2; color: #b42318; } .c5 { background: #fee4e2; color: #b42318; }
 .err { color: #b42318; }
-.timeline { max-height: 260px; overflow: hidden; }
+.timeline { max-height: 178px; overflow: hidden; }
+.tl { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tl { font-size: 12px; padding: 3px 0; border-bottom: 1px dashed #eef1f5; }
 .tl.k-resumed { color: #067647; font-weight: 600; }
 .tl.k-retry { color: #6b7685; }
