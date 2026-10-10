@@ -155,8 +155,10 @@ def demo_partner(request, ref):
 
 @api_view(["POST"])
 def demo_reset(request):
-    demo.reset()
-    return Response({"ok": True})
+    from django.core.management import call_command
+
+    call_command("seed_demo", force=True)
+    return Response({"ok": True, "applications": Application.objects.count()})
 
 
 def health(request):

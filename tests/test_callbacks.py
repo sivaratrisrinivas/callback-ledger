@@ -214,3 +214,28 @@ def test_http_endpoint_checks_the_raw_body_signature(client, waiting):
     r2 = client.post(path, data=body.replace(b"approved", b"approveD"), content_type="application/json", **hdrs)
     assert r2.status_code == 401
     assert json.loads(r2.content)["reason"] == "BAD_SIGNATURE"
+
+
+def test_celery_timeout_task_runs_the_timeout_path(waiting):
+    from ledger.tasks import expire_wait_task, sweep_expired_waits
+
+    app, wait, path, t0 = waiting
+    WaitStep.objects.filter(pk=wait.pk).update(timeout_at=timezone.now() - seconds(1))
+    assert expire_wait_task.apply(args=[str(wait.pk)]).get() is True
+    assert expire_wait_task.apply(args=[str(wait.pk)]).get() is False  # second delivery is a no-op
+    assert sweep_expired_waits.apply().get() == 0
+    app.refresh_from_db()
+    assert app.status == Application.Status.TIMEOUT_PATH
+
+
+def test_demo_api_end_to_end(client):
+    """Reset, seed, open an application through the demo API, and read it back."""
+    r = client.post("/api/demo/reset")
+    assert r.status_code == 200 and r.json()["applications"] == 3
+    r = client.post("/api/demo/applications", {"max_wait_seconds": 30}, content_type="application/json")
+    ref = r.json()["ref"]
+    assert r.json()["status"] == "WAITING"
+    detail = client.get(f"/api/applications/{ref}").json()
+    assert detail["wait"]["state"] == "WAITING" and detail["advance_count"] == 0
+    parked = client.get("/api/parked").json()
+    assert any(p["agent_status"] == "OPEN" for p in parked)  # the seeded late reply
