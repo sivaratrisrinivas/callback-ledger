@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+db.sqlite3*
+*.sqlite3
+node_modules/
+frontend/dist/
+.env
+staticfiles/
+video-work/
+.pytest_cache/
