@@ -1,0 +1,17 @@
+# Postgres 16 + Redis + the app (web, Celery worker and beat in one container).
+services:
+  db:
+    image: postgres:16
+    environment: {POSTGRES_USER: ledger, POSTGRES_PASSWORD: ledger, POSTGRES_DB: callback_ledger}
+    healthcheck: {test: ["CMD", "pg_isready", "-U", "ledger"], interval: 2s, retries: 20}
+  redis:
+    image: redis:7
+  app:
+    build: .
+    ports: ["8000:8000"]
+    environment:
+      DATABASE_URL: postgres://ledger:ledger@db:5432/callback_ledger
+      CELERY_BROKER_URL: redis://redis:6379/0
+    depends_on:
+      db: {condition: service_healthy}
+      redis: {condition: service_started}

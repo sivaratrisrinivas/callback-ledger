@@ -1,0 +1,7 @@
+.venv
+.git
+frontend/node_modules
+frontend/dist
+db.sqlite3
+test-db.sqlite3
+video-work
