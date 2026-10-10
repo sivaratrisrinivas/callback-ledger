@@ -132,6 +132,8 @@ export default function App() {
     run("new", async () => {
       const r = await api("/api/demo/applications", { method: "POST", body: { max_wait_seconds: Number(maxWait) } });
       if (r.ok) {
+        setApps((prev) => [r.data, ...prev]);
+        setDetail({ ...r.data, timeline: [] });
         setSel(r.data.ref);
         setLast(null);
       }
